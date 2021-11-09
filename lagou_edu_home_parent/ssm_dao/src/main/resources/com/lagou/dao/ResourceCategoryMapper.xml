@@ -8,4 +8,19 @@
         select * from resource_category
     </select>
 
+    <!--新增所有资源分类 public void saveResourceCategory(ResourceCategory resourceCategory);-->
+    <insert id="saveResourceCategory" parameterType="com.lagou.domain.ResourceCategory">
+        insert into resource_category values (null,#{name},#{sort},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+
+    <!--修改所有资源分类 public void updateResourceCategory(ResourceCategory resourceCategory);-->
+    <update id="updateResourceCategory" parameterType="com.lagou.domain.ResourceCategory">
+        update resource_category set name=#{name},sort=#{sort},updated_time=#{updatedTime} where id=#{id}
+    </update>
+
+    <!--删除所有资源分类 public void deleteResourceCategory(Integer id);-->
+    <delete id="deleteResourceCategory" parameterType="int">
+        delete from resource_category where id = #{id}
+    </delete>
+
 </mapper>

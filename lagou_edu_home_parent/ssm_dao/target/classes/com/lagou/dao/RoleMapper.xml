@@ -37,5 +37,31 @@
         delete from roles where id = #{roleid}
     </delete>
 
+    <!-- 查询当前角色拥有的资源分类信息 public List<ResourceCategory> findAllResourceCategoryByRoleID(Integer id);   -->
+    <select id="findAllResourceCategoryByRoleID" parameterType="int" resultType="com.lagou.domain.ResourceCategory">
+        SELECT * FROM resource_category rc WHERE rc.`id` IN
+          (
+            SELECT DISTINCT r.category_id
+            FROM resource r INNER JOIN role_resource_relation rrr ON rrr.`resource_id` = r.`id`
+            WHERE rrr.role_id = #{roleId}
+          )
+    </select>
+
+    <!--查询当前角色拥有的资源信息public List<Resource> findAllResourceByRoleID(Integer id);-->
+    <select id="findAllResourceByRoleID" parameterType="int" resultType="com.lagou.domain.Resource">
+        SELECT r.*
+        FROM roles ro INNER JOIN role_resource_relation rr ON ro.id = rr.role_id
+		INNER JOIN resource r ON r.id = rr.resource_id WHERE ro.id = #{id}
+    </select>
+
+    <!--根据角色ID 删除角色与资源的关联关系public void deleteRoleResourceRelation(Integer roleId);    -->
+    <delete id="deleteRoleResourceRelation" parameterType="int">
+        DELETE FROM role_resource_relation WHERE role_id = #{roleId}
+    </delete>
+
+    <!--插入最新的关联关系public void saveRoleResourceRelation(Role_Resource_Relation role_resource_relation);-->
+    <insert id="saveRoleResourceRelation" parameterType="com.lagou.domain.Role_Resource_Relation">
+        insert into role_resource_relation values (null,#{resourceId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
 
 </mapper>

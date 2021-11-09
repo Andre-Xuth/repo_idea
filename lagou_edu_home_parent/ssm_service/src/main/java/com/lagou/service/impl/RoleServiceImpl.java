@@ -1,13 +1,12 @@
 package com.lagou.service.impl;
 
 import com.lagou.dao.RoleMapper;
-import com.lagou.domain.Role;
-import com.lagou.domain.RoleMenuVo;
-import com.lagou.domain.Role_menu_relation;
+import com.lagou.domain.*;
 import com.lagou.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -66,5 +65,49 @@ public class RoleServiceImpl implements RoleService {
 
         roleMapper.deleteRole(roleid);
     }
+
+    @Override
+    public List<ResourceCategory> findAllResourceByRoleId(Integer id) {
+
+        // 查询当前用户拥有的资源分类信息
+        List<ResourceCategory> allResourceCategory = roleMapper.findAllResourceCategoryByRoleID(id);
+
+        // 获取当前角色拥有的资源信息
+        List<Resource> allResource = roleMapper.findAllResourceByRoleID(id);
+
+        // 封装allResourceCategory
+        for (Resource resource : allResource){
+            for (ResourceCategory resourceCategory:allResourceCategory) {
+                if (resource.getCategoryId().equals(resourceCategory.getId())){
+                    resourceCategory.getResourceList().add(resource);
+                }
+            }
+        }
+
+        return allResourceCategory;
+    }
+
+    @Override
+    public void roleContextResource(RoleResourceVo roleResourceVo) {
+        
+        // 清空中间表的关联关系
+        roleMapper.deleteRoleResourceRelation(roleResourceVo.getRoleId());
+        
+        // 为角色分配资源
+        for (int resourceId:roleResourceVo.getResourceIdList()) {
+            Role_Resource_Relation role_resource_relation = new Role_Resource_Relation();
+            // 封装数据
+            role_resource_relation.setRoleId(roleResourceVo.getRoleId());
+            role_resource_relation.setResourceId(resourceId);
+            Date date = new Date();
+            role_resource_relation.setCreatedTime(date);
+            role_resource_relation.setUpdatedTime(date);
+            role_resource_relation.setCreatedBy("system");
+            role_resource_relation.setUpdatedBy("system");
+
+            roleMapper.saveRoleResourceRelation(role_resource_relation);
+        }
+    }
+
 
 }

@@ -11,4 +11,7 @@ public interface ResourceCategoryMapper {
      */
     public List<ResourceCategory> findAllResourceCategory();
 
+    // 新增资源分类
+    public void saveResourceCategory(ResourceCategory resourceCategory);
+
 }

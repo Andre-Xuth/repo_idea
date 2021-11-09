@@ -20,7 +20,6 @@ public interface CourseContentMapper {
      */
     public void saveSection(CourseSection courseSection);
 
-
     /*
         更新章节信息
      */

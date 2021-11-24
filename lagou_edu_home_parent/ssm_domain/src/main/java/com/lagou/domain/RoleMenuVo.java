@@ -8,6 +8,7 @@ public class RoleMenuVo {
 
     private List<Integer> menuIdList;
 
+
     public Integer getRoleId() {
         return roleId;
     }
@@ -22,13 +23,5 @@ public class RoleMenuVo {
 
     public void setMenuIdList(List<Integer> menuIdList) {
         this.menuIdList = menuIdList;
-    }
-
-    @Override
-    public String toString() {
-        return "RoleMenuVo{" +
-                "roleId=" + roleId +
-                ", menuIdList=" + menuIdList +
-                '}';
     }
 }

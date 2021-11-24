@@ -3,24 +3,66 @@
 
 <mapper namespace="com.lagou.dao.ResourceCategoryMapper">
 
-    <!--查询所有资源分类-->
+
+    <!--查询-->
     <select id="findAllResourceCategory" resultType="com.lagou.domain.ResourceCategory">
         select * from resource_category
     </select>
 
-    <!--新增所有资源分类 public void saveResourceCategory(ResourceCategory resourceCategory);-->
-    <insert id="saveResourceCategory" parameterType="com.lagou.domain.ResourceCategory">
-        insert into resource_category values (null,#{name},#{sort},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
-    </insert>
 
-    <!--修改所有资源分类 public void updateResourceCategory(ResourceCategory resourceCategory);-->
+    <!--更新     void updateResourceCategory(ResourceCategory resourceCategory);
+        private Integer id;
+    private String name;
+    private Date createdTime;
+    private Date updatedTime;
+    private String createdBy;
+    private String updatedBy;
+    -->
     <update id="updateResourceCategory" parameterType="com.lagou.domain.ResourceCategory">
-        update resource_category set name=#{name},sort=#{sort},updated_time=#{updatedTime} where id=#{id}
+        update resource_category
+
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+
+            <if test="sort != null and sort != ''">
+                sort = #{sort},
+            </if>
+
+            <if test="createdTime != null">
+                created_time = #{createdTime},
+            </if>
+
+            <if test="updatedTime != null">
+                updated_time=#{updatedTime},
+            </if>
+
+            <if test="createdBy != null">
+                created_by=#{createdBy},
+            </if>
+
+            <if test="updatedBy != null">
+                updated_by=#{updatedBy},
+            </if>
+
+        </trim>
+
+        <where>
+            <if test="id != null and id != '' ">id = #{id}</if>
+        </where>
     </update>
 
-    <!--删除所有资源分类 public void deleteResourceCategory(Integer id);-->
+
+    <insert id="saveResourceCategory" parameterType="com.lagou.domain.ResourceCategory">
+        insert into resource_category values(null,#{name},#{sort},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+
+
+    <!--void deleteResourceCategory(Integer id);-->
     <delete id="deleteResourceCategory" parameterType="int">
         delete from resource_category where id = #{id}
     </delete>
+
 
 </mapper>

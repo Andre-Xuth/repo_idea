@@ -7,45 +7,60 @@ import java.util.List;
 public interface RoleMapper {
 
     /*
-        查询所有角色&条件进行查询
+        分页查询角色
      */
+    public List<Role> findAllRole(RoleVo roleVo);
 
-    public List<Role> findAllRole(Role role);
+    /*
+        添加角色
+     */
+    public void saveRole(Role role);
 
 
     /*
-        根据角色ID查询该角色关联的菜单信息ID [1,2,3,5]
+        更新角色
      */
-    public List<Integer> findMenuByRoleId(Integer roleid);
-
-
-    /*
-        根据roleid清空中间表的关联关系
-     */
-    public void deleteRoleContextMenu(Integer rid);
-
-
-    /*
-        为角色分配菜单信息
-     */
-    public void roleContextMenu(Role_menu_relation role_menu_relation);
+    void updateRole(Role role);
 
     /*
         删除角色
      */
+    void deleteRole(Integer id);
 
-    public void deleteRole(Integer roleid);
+    /*
+        根据角色ID查询菜单信息
+     */
+    List<String> findMenuByRoleId(Integer roleId);
 
-    // 查询当前角色拥有的资源分类信息
-    public List<ResourceCategory> findAllResourceCategoryByRoleID(Integer id);
+    /*
+       为角色分配菜单
+     */
+    void RoleContextMenu(Role_menu_relation role_menu_relation);
 
-    // 查询当前角色拥有的资源信息
-    public List<Resource> findAllResourceByRoleID(Integer id);
+    /*
+        删除角色和菜单的关联信息
+     */
+    void deleteRoleContextMenu(Integer roleId);
 
-    // 根据角色ID 删除角色与资源的关联关系
-    public void deleteRoleResourceRelation(Integer roleId);
+    /**
+     * 获取角色拥有的资源分类数据
+     * */
+    List<ResourceCategory> findRoleHaveResourceCate(int id);
 
-    // 插入最新的关联关系
-    public void saveRoleResourceRelation(Role_Resource_Relation role_resource_relation);
+
+    /**
+     * 获取角色拥有的资源数据
+     * */
+    List<Resource> findRoleHaveResource(int id);
+
+    /*
+     删除角色和资源的关联信息
+    */
+    void deleteRoleContextResource(Integer roleId);
+
+    /**
+     * 为角色分配资源
+     * */
+    void roleContextResource(RoleResourceRelation resourceRelation);
 
 }

@@ -3,8 +3,37 @@
 
 <mapper namespace="com.lagou.dao.MenuMapper">
 
-    <resultMap id="menuResult" type="com.lagou.domain.Menu">
+    <!--  查询菜单列表  -->
+    <select id="findAllMenu" resultType="com.lagou.domain.Menu">
+        SELECT
+            id,
+            parent_id,
+            href,
+            icon,
+            NAME,
+            description,
+            order_num,
+            shown,
+            LEVEL,
+            created_time,
+            updated_time,
+            created_by,
+            updated_by
+        FROM menu
+    </select>
 
+    <!--  根据id获取 菜单信息  -->
+    <select id="findMenuById" resultType="com.lagou.domain.Menu" parameterType="int">
+         select * from menu where id = #{id}
+    </select>
+
+    <!-- 一对多: 查找子孙菜单 -->
+    <select id="findSubMenuListByPid" resultMap="MenuResult">
+        select * from menu where parent_id = #{pid}
+    </select>
+
+    <!--  根据pid 查询所有子分类集合  -->
+    <resultMap id="MenuResult" type="com.lagou.domain.Menu">
         <id column="id" property="id"></id>
         <result column="href" property="href"></result>
         <result column="icon" property="icon"></result>
@@ -18,29 +47,82 @@
         <result column="created_by" property="createdBy"></result>
         <result column="updated_by" property="updatedBy"></result>
 
-        <collection property="subMenuList" ofType="com.lagou.domain.Menu" select="findSubMenuListByPid" column="id">
-
-        </collection>
-
+        <collection property="subMenuList" ofType="com.lagou.domain.Menu"
+                    select="findSubMenuListByPid" column="id" ></collection>
     </resultMap>
 
+    <!--  保存菜单信息  -->
+    <insert id="saveMenu" parameterType="com.lagou.domain.Menu">
+        INSERT INTO menu(
+            NAME,
+            href,
+            parent_id,
+            description,
+            icon,
+            shown,
+            order_num,
+            level,
+            created_time,
+            updated_time,
+            created_by,
+            updated_by
+        )VALUES(#{name},#{href},#{parentId},#{description},#{icon},#{shown},
+        #{orderNum},#{level},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
 
-    <!--查询所有父子菜单信息-->
-    <select id="findSubMenuListByPid" parameterType="int" resultMap="menuResult">
-        SELECT * FROM menu WHERE parent_id = #{id}
-    </select>
+    <!--  修改菜单操作  -->
+    <update id="updateMenu" parameterType="com.lagou.domain.Menu">
+        UPDATE menu
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
 
+            <if test="href != null and href != ''">
+                href = #{href},
+            </if>
 
-    <!--查询所有菜单信息     public List<Menu> findAllMenu();-->
-    <select id="findAllMenu" resultType="com.lagou.domain.Menu">
-        select * from menu
-    </select>
+            <if test="parentId != null and parentId != ''">
+                parent_id = #{parentId},
+            </if>
 
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
 
-    <!--根据ID查询menu    Menu findMenuById(Integer id);-->
-    <select id="findMenuById" parameterType="int" resultType="com.lagou.domain.Menu">
-        select * from menu where id = #{id}
-    </select>
+            <if test="icon != null and icon != ''">
+                icon = #{icon},
+            </if>
+
+            <if test="shown != null and shown != ''">
+                shown = #{shown},
+            </if>
+
+            <if test="orderNum != null and orderNum != ''">
+                order_num = #{orderNum},
+            </if>
+
+            <if test="createdTime != null ">
+                created_time = #{createdTime},
+            </if>
+
+            <if test="updatedTime != null ">
+                updated_time = #{updatedTime},
+            </if>
+
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+
+            <if test="updatedBy != null and updatedBy != ''">
+                updated_by = #{updatedBy},
+            </if>
+        </trim>
+
+        <where>
+            <if test="id != null and id != '' ">id = #{id}</if>
+        </where>
+    </update>
 
 
 </mapper>

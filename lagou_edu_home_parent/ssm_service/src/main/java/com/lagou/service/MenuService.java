@@ -1,23 +1,22 @@
 package com.lagou.service;
 
+import com.github.pagehelper.PageInfo;
 import com.lagou.domain.Menu;
+import com.lagou.domain.MenuVo;
 
 import java.util.List;
 
 public interface MenuService {
 
-        /*
-        查询所有父子菜单信息
-     */
+    public PageInfo<Menu> findAllMenu(MenuVo menuVo);
+
+    public Menu findMenuById(int id);
 
     public List<Menu> findSubMenuListByPid(int pid);
 
+    public void saveMenu(Menu menu);
 
-    /*
-        查询所有菜单信息
-     */
-    public List<Menu> findAllMenu();
+    public void updateMenu(Menu menu);
 
-
-    Menu findMenuById(Integer id);
+    List<Menu> findAllMenu2();
 }

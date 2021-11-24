@@ -16,50 +16,38 @@ public class PromotionSpaceServiceImpl implements PromotionSpaceService {
     @Autowired
     private PromotionSpaceMapper promotionSpaceMapper;
 
+
     @Override
     public List<PromotionSpace> findAllPromotionSpace() {
-
         List<PromotionSpace> allPromotionSpace = promotionSpaceMapper.findAllPromotionSpace();
-
         return allPromotionSpace;
     }
 
     @Override
     public void savePromotionSpace(PromotionSpace promotionSpace) {
 
-        // 1.封装数据
-        promotionSpace.setSpaceKey(UUID.randomUUID().toString());
-        Date date = new Date();
-        promotionSpace.setCreateTime(date);
-        promotionSpace.setUpdateTime(date);
-        promotionSpace.setIsDel(0);
+        // 封装PromotionSpace
+        UUID uuid = UUID.randomUUID();
 
-        // 2.调用mapper方法
+        promotionSpace.setSpaceKey(uuid.toString());
+        promotionSpace.setCreateTime(new Date());
+        promotionSpace.setUpdateTime(new Date());
+        promotionSpace.setIsDel(0);
         promotionSpaceMapper.savePromotionSpace(promotionSpace);
 
     }
 
-    /*
-        根据ID查询广告位信息
-     */
+    @Override
+    public void updatePromotionSpace(PromotionSpace promotionSpace) {
+        promotionSpace.setUpdateTime(new Date());
+        promotionSpaceMapper.updatePromotionSpace(promotionSpace);
+    }
+
+
     @Override
     public PromotionSpace findPromotionSpaceById(int id) {
 
-        PromotionSpace promotionSpaceById = promotionSpaceMapper.findPromotionSpaceById(id);
-        return promotionSpaceById;
-    }
-
-    /*
-        修改广告位名称
-     */
-    @Override
-    public void updatePromotionSpace(PromotionSpace promotionSpace) {
-
-        // 封装数据
-        promotionSpace.setUpdateTime(new Date());
-
-        // 调用mapper
-        promotionSpaceMapper.updatePromotionSpace(promotionSpace);
-
+        PromotionSpace promotionSpace = promotionSpaceMapper.findPromotionSpaceById(id);
+        return promotionSpace;
     }
 }

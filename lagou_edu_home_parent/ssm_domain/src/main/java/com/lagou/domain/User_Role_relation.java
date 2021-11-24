@@ -2,14 +2,26 @@ package com.lagou.domain;
 
 import java.util.Date;
 
+/**
+ * 用户角色中间表
+ * */
 public class User_Role_relation {
 
+    //id
     private Integer id;
+
+    //用户id
     private Integer userId;
+
+    //角色id
     private Integer roleId;
+
     private Date createdTime;
+
     private Date updatedTime;
+
     private String createdBy;
+
     private String updatedby;
 
     public Integer getId() {

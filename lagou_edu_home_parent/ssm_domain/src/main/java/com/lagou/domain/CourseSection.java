@@ -38,14 +38,6 @@ public class CourseSection {
     //课时集合
     private List<CourseLesson> lessonList;
 
-    public List<CourseLesson> getLessonList() {
-        return lessonList;
-    }
-
-    public void setLessonList(List<CourseLesson> lessonList) {
-        this.lessonList = lessonList;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -116,5 +108,13 @@ public class CourseSection {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public List<CourseLesson> getLessonList() {
+        return lessonList;
+    }
+
+    public void setLessonList(List<CourseLesson> lessonList) {
+        this.lessonList = lessonList;
     }
 }

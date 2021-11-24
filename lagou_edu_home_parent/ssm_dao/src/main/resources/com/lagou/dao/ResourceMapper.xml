@@ -3,26 +3,97 @@
 
 <mapper namespace="com.lagou.dao.ResourceMapper">
 
-    <!--分页&多条件查询资源-->
-    <select id="findAllResourceByPage" parameterType="com.lagou.domain.ResourseVo" resultType="com.lagou.domain.Resource">
-
+    <!--查询所有资源-->
+    <select id="findAllResource" resultType="com.lagou.domain.Resource">
         select * from resource
-
         <where>
-            <if test="name != null and name != ''">
-                and name like concat('%',#{name},'%')
+
+            <if test="name != null and name != '' ">
+                and name like  concat('%',#{name},'%')
             </if>
 
-            <if test="url != null and url != ''">
+            <if test="url != null and url != '' ">
                 and url = #{url}
             </if>
 
-            <if test="categoryId != null and categoryId != ''">
+            <if test="categoryId != null">
                 and category_id = #{categoryId}
             </if>
+
         </where>
 
     </select>
+
+    <!--    void saveResource(Resource resource);
+
+    void updateResource(Resource resource);
+     private Integer id;
+    private String name;
+    private String url;
+    private Integer categoryId;
+    private String description;
+    private Date createdTime;
+    private Date updatedTime;
+    private String createdBy;
+    private String updatedBy;
+    -->
+
+    <insert id="saveResource" parameterType="com.lagou.domain.Resource">
+        insert into resource values(null,#{name},#{url},#{categoryId},#{description},#{createdTime},#{updatedTime},#{createdBy},#{updatedBy})
+    </insert>
+
+    <update id="updateResource" parameterType="com.lagou.domain.Resource">
+        update Resource
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+
+            <if test="url != null and url != ''">
+                url = #{url},
+            </if>
+
+            <if test="categoryId != null and categoryId != ''">
+                category_id = #{categoryId},
+            </if>
+
+            <if test="createdTime != null">
+                created_time=#{createdTime},
+            </if>
+
+            <if test="updatedTime != null">
+                updated_time=#{updatedTime},
+            </if>
+
+            <if test="createdBy != null">
+                created_by=#{createdBy},
+            </if>
+
+            <if test="updatedBy != updatedBy">
+                updated_by=#{updatedBy},
+            </if>
+
+        </trim>
+
+        <where>
+            <if test="id != null and id != '' ">id = #{id}</if>
+        </where>
+
+    </update>
+
+
+    <!-- void deleteResource(Integer id);
+         private Integer id;
+private String name;
+private Date createdTime;
+private Date updatedTime;
+private String createdBy;
+private String updatedBy;
+     -->
+    <delete id="deleteResource" parameterType="int">
+        delete from Resource where id = #{id}
+    </delete>
+
 
 
 </mapper>

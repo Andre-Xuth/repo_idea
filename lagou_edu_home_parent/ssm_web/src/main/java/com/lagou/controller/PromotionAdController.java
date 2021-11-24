@@ -2,7 +2,7 @@ package com.lagou.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.lagou.domain.PromotionAd;
-import com.lagou.domain.PromotionAdVO;
+import com.lagou.domain.PromotionAdVo;
 import com.lagou.domain.ResponseResult;
 import com.lagou.service.PromotionAdService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,81 +24,142 @@ import java.util.Map;
 public class PromotionAdController {
 
     @Autowired
-    private PromotionAdService promotionAdService;
+    private PromotionAdService adService;
 
-    @RequestMapping("/findAllPromotionAdByPage")
-    public ResponseResult findAllAdByPage(PromotionAdVO promotionAdVO){
-
-        PageInfo<PromotionAd> pageInfo = promotionAdService.findAllPromotionAdByPage(promotionAdVO);
-
-        ResponseResult result = new ResponseResult(true, 200, "广告分页查询成功", pageInfo);
-
-        return result;
-    }
+    public static final String LOCAL_URL = "http://localhost:8080";
 
     /*
-    * 图片上传
-    * */
-    @RequestMapping("/PromotionAdUpload")
-    public ResponseResult fileUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
+        分页查询所有广告信息
+     */
+    @RequestMapping("/findAllPromotionAd")
+    public ResponseResult findAllAdByPage(PromotionAdVo adVo) {
+        PageInfo allAdByPage = adService.findAllAdByPage(adVo);
 
-        //1.判断接收到的上传文件是否为空
-        if (file.isEmpty()) {
-            throw new RuntimeException();
-        }
-
-        //2.获取项目部署路径
-        // D:\apache-tomcat-8.5.56\webapps\ssm-web\
-        String realPath = request.getServletContext().getRealPath("/");
-        // D:\apache-tomcat-8.5.56\webapps
-        String substring = realPath.substring(0, realPath.indexOf("ssm_web"));
-
-        //3.获取原文件名
-        //lagou.jpg
-        String originalFilename = file.getOriginalFilename();
-
-        //4.生成新文件名
-        //12421321.jpg
-        String newFileName = System.currentTimeMillis() + originalFilename.substring(originalFilename.lastIndexOf("."));
-
-        //5.文件上传
-        String uploadPath = substring + "upload\\";
-        File filePath = new File(uploadPath, newFileName);
-
-        // 如果目录不存在就创建目录
-        if (!filePath.getParentFile().exists()) {
-            filePath.getParentFile().mkdirs();
-            System.out.println("创建目录：" + filePath);
-        }
-        // 图片就进行了真正的上传
-        file.transferTo(filePath);
-
-        // 6. 将文件名和文件路径返回，进行响应
-        Map<String, String> map = new HashMap<>();
-        map.put("fileName", newFileName);
-        map.put("filePath", "http://localhost:8080/upload/" + newFileName);
-
-        ResponseResult responseResult = new ResponseResult(true, 200, "图片上传成功", map);
-
+        ResponseResult responseResult = new ResponseResult(true, 200, "响应成功", allAdByPage);
         return responseResult;
+    }
 
+
+    /*
+        文件上传
+     */
+    @RequestMapping("/PromotionAdUpload")
+    public ResponseResult fileupload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
+
+
+        try {
+            //1.判断文件是否为空
+            if (file.isEmpty()) {
+                throw new RuntimeException();
+            }
+
+            //2.获取项目部署路径
+            String realPath = request.getServletContext().getRealPath("/");
+            String webappsPath = realPath.substring(0, realPath.indexOf("ssm-web"));
+
+            //3.获取原文件名
+            String fileName = file.getOriginalFilename();
+
+            //4.新文件名
+            String newFileName = System.currentTimeMillis() + fileName.substring(fileName.lastIndexOf("."));
+
+            //5.上传文件
+            String uploadPath = webappsPath + "upload\\";
+            File filePath = new File(uploadPath, newFileName);
+
+            //如果目录不存在就创建目录
+            if (!filePath.getParentFile().exists()) {
+                filePath.getParentFile().mkdirs();
+                System.out.println("创建目录: " + filePath);
+            }
+            file.transferTo(filePath);
+
+            //6.将文件名和文件路径返回
+            Map<String, String> map = new HashMap<>();
+            map.put("fileName", newFileName);
+            map.put("filePath", LOCAL_URL + "/upload/" + newFileName);
+            ResponseResult result = new ResponseResult(true, 200, "响应成功", map);
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /*
+        新增或更新广告位置
+     */
+    @RequestMapping("/saveOrUpdatePromotionAd")
+    public ResponseResult saveOrUpdatePromotionAd(@RequestBody PromotionAd promotionAd) {
+
+        try {
+
+            if (promotionAd.getId() == null) {
+                Date date = new Date();
+                promotionAd.setCreateTime(date);
+                promotionAd.setUpdateTime(date);
+
+                adService.savePromotionAd(promotionAd);
+                ResponseResult result = new ResponseResult(true, 200, "响应成功", null);
+                return result;
+
+            } else {
+                Date date = new Date();
+                promotionAd.setUpdateTime(date);
+
+                adService.updatePromotionAd(promotionAd);
+                ResponseResult result = new ResponseResult(true, 200, "响应成功", null);
+                return result;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
-     *@author Xuth
-     *@create 2021/11/7 18:18
-     *@desc   广告动态上下线
-     *@param
-     *@return
-     */
-    @RequestMapping("/updatePromotionAdStatus")
-    public ResponseResult updatePromotionAdStatus(Integer id,Integer status){
+     * 根据id回显 广告数据
+     * */
+    @RequestMapping("/findPromotionAdById")
+    public ResponseResult findPromotionAdById(@RequestParam int id){
 
-        promotionAdService.updatePromotionAdStatus(id,status);
-        ResponseResult responseResult = new ResponseResult(true, 200, "广告状态上下线成功", null);
-
-        return responseResult;
-
+        try {
+            PromotionAd promotionAd = adService.findPromotionAdById(id);
+            ResponseResult result = new ResponseResult(true,200,"响应成功",promotionAd);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
+
+    /*
+         广告位置上下线
+     */
+
+    @RequestMapping("/updatePromotionAdStatus")
+    public ResponseResult updateCourseStatus(@RequestParam int id, @RequestParam int status) {
+
+        try {
+            //执行修改操作
+            if (status == 1) {
+                adService.updatePromotionAdStatus(id, status);
+            } else {
+                adService.updatePromotionAdStatus(id, 0);
+            }
+            //保存修改后的状态,并返回
+            Map<String, Integer> map = new HashMap<>();
+            map.put("status", status);
+            ResponseResult result = new ResponseResult(true, 200, "响应成功", map);
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -6,30 +6,21 @@ import java.util.List;
 
 public interface RoleService {
 
-    /*
-        查询所有角色（条件）
-     */
-    public List<Role>  findAllRole(Role role);
+    public List<Role> findAllRole(RoleVo roleVo);
 
-    /*
-    根据角色ID查询该角色关联的菜单信息ID [1,2,3,5]
- */
-    public List<Integer> findMenuByRoleId(Integer roleid);
+    public void saveRole(Role role);
 
-    /*
-        为角色分配菜单
-     */
-    public void roleContextMenu(RoleMenuVo roleMenuVo);
 
-    /*
-        删除角色
-     */
-    public void deleteRole(Integer roleid);
+    void updateRole(Role role);
 
-    // 查询当前角色拥有的资源信息
-    public List<ResourceCategory> findAllResourceByRoleId(Integer id);
+    void deleteRole(Integer id);
 
-    // 角色分配菜单
-    public void roleContextResource(RoleResourceVo roleResourceVo);
+    List<String> findMenuByRoleId(Integer roleId);
+
+    void RoleContextMenu(RoleMenuVo roleMenuVo);
+
+    List<ResourceCategory> findRoleHaveResource(int id);
+
+    void roleContextResource(RoleResourceVo roleResourceVo);
 
 }

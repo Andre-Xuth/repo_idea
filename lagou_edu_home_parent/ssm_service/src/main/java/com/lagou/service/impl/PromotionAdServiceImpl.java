@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lagou.dao.PromotionAdMapper;
 import com.lagou.domain.PromotionAd;
-import com.lagou.domain.PromotionAdVO;
+import com.lagou.domain.PromotionAdVo;
 import com.lagou.service.PromotionAdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,17 +16,27 @@ import java.util.List;
 public class PromotionAdServiceImpl implements PromotionAdService {
 
     @Autowired
-    private PromotionAdMapper promotionAdMapper;
+    private PromotionAdMapper adMapper;
 
     @Override
-    public PageInfo<PromotionAd> findAllPromotionAdByPage(PromotionAdVO promotionAdVO) {
+    public PageInfo findAllAdByPage(PromotionAdVo adVo) {
 
-        PageHelper.startPage(promotionAdVO.getCurrentPage(),promotionAdVO.getPageSize());
-        List<PromotionAd> list = promotionAdMapper.findAllPromotionAdByPage();
+        PageHelper.startPage(adVo.getCurrentPage(),adVo.getPageSize());
+        List<PromotionAd> allAd = adMapper.findAllAdByPage();
+        PageInfo<PromotionAd> adPageInfo = new PageInfo<>(allAd);
+        return adPageInfo;
+    }
 
-        PageInfo<PromotionAd> pageInfo = new PageInfo<>(list);
+    @Override
+    public void savePromotionAd(PromotionAd promotionAd) {
 
-        return pageInfo;
+        adMapper.savePromotionAd(promotionAd);
+    }
+
+    @Override
+    public void updatePromotionAd(PromotionAd promotionAd) {
+
+        adMapper.updatePromotionAd(promotionAd);
     }
 
     @Override
@@ -37,7 +47,12 @@ public class PromotionAdServiceImpl implements PromotionAdService {
         promotionAd.setStatus(status);
         promotionAd.setUpdateTime(new Date());
 
-        promotionAdMapper.updatePromotionAdStatus(promotionAd);
+        adMapper.updatePromotionAdStatus(promotionAd);
+    }
 
+    @Override
+    public PromotionAd findPromotionAdById(int id) {
+        PromotionAd promotionAd = adMapper.findPromotionAdById(id);
+        return promotionAd;
     }
 }

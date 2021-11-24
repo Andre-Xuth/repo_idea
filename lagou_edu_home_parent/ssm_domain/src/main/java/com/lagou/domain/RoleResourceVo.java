@@ -5,6 +5,7 @@ import java.util.List;
 public class RoleResourceVo {
 
     private Integer roleId;
+
     private List<Integer> resourceIdList;
 
     public Integer getRoleId() {
@@ -22,4 +23,6 @@ public class RoleResourceVo {
     public void setResourceIdList(List<Integer> resourceIdList) {
         this.resourceIdList = resourceIdList;
     }
+
+
 }

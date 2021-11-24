@@ -2,6 +2,7 @@ package com.lagou.utils;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Md5 {
 
@@ -41,6 +42,7 @@ public class Md5 {
 
 
     public static void main(String[] args) throws Exception {
+
 
         // 注册  用户名：tom  密码：123456
         // 添加用户的时候，要将明文密码转换成密文密码

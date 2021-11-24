@@ -15,10 +15,8 @@ public class ResourceCategoryServiceImpl implements ResourceCategoryService {
     @Autowired
     private ResourceCategoryMapper resourceCategoryMapper;
 
-
     @Override
     public List<ResourceCategory> findAllResourceCategory() {
-
         List<ResourceCategory> allResourceCategory = resourceCategoryMapper.findAllResourceCategory();
 
         return allResourceCategory;
@@ -26,30 +24,26 @@ public class ResourceCategoryServiceImpl implements ResourceCategoryService {
 
     @Override
     public void saveResourceCategory(ResourceCategory resourceCategory) {
-
-        // 封装信息
-        Date date = new Date();
-        resourceCategory.setCreatedTime(date);
-        resourceCategory.setUpdatedTime(date);
+        resourceCategory.setCreatedTime(new Date());
+        resourceCategory.setUpdatedTime(new Date());
         resourceCategory.setCreatedBy("system");
         resourceCategory.setUpdatedBy("system");
-
         resourceCategoryMapper.saveResourceCategory(resourceCategory);
+
     }
 
     @Override
     public void updateResourceCategory(ResourceCategory resourceCategory) {
-
-        // 封装信息
-        Date date = new Date();
-        resourceCategory.setUpdatedTime(date);
-
+        resourceCategory.setCreatedTime(new Date());
+        resourceCategory.setUpdatedTime(new Date());
+        resourceCategory.setCreatedBy("system");
+        resourceCategory.setUpdatedBy("system");
         resourceCategoryMapper.updateResourceCategory(resourceCategory);
     }
 
     @Override
     public void deleteResourceCategory(Integer id) {
-
         resourceCategoryMapper.deleteResourceCategory(id);
     }
+
 }

@@ -2,22 +2,24 @@ package com.lagou.service;
 
 import com.github.pagehelper.PageInfo;
 import com.lagou.domain.PromotionAd;
-import com.lagou.domain.PromotionAdVO;
+import com.lagou.domain.PromotionAdVo;
 
 import java.util.List;
 
 public interface PromotionAdService {
 
     /*
-    分页查询广告信息
- */
-    public PageInfo<PromotionAd> findAllPromotionAdByPage(PromotionAdVO promotionAdVO);
+    分页获取所有的广告列表
+*/
+    public PageInfo findAllAdByPage(PromotionAdVo adVo);
 
-    /*
-    *  广告动态上下线
-    * */
+    void savePromotionAd(PromotionAd promotionAd);
 
-    public void updatePromotionAdStatus(int id,int status);
+    void updatePromotionAd(PromotionAd promotionAd);
+
+    void updatePromotionAdStatus(int id, int status);
+
+    PromotionAd findPromotionAdById(int id);
 
 
 }

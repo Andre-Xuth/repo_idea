@@ -1,48 +1,48 @@
 package com.lagou.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
-
+/**
+ * 广告表
+ * */
 public class PromotionAd {
 
     // 标识
     private Integer id;
+
     // 广告名
     private String name;
+
     // 广告位id
     private Integer spaceId;
+
     // 精确搜索关键词
     private String keyword;
+
     // 静态广告的内容
     private String htmlContent;
+
     // 文字一
     private String text;
+
     // 链接一
     private String link;
-    // 开始时间
 
+    // 开始时间
     private Date startTime;
+
     // 结束时间
     private Date endTime;
-    private Date createTime;
-    private Date updateTime;
+
     private Integer status;
+
+    private Date createTime;
+
+    private Date updateTime;
+
     // 优先级
     private Integer priority;
+
     private String img;
-
-    //声明一方关系：PromotionSpace
-    private PromotionSpace promotionSpace;
-
-    public PromotionSpace getPromotionSpace() {
-        return promotionSpace;
-    }
-
-    public void setPromotionSpace(PromotionSpace promotionSpace) {
-        this.promotionSpace = promotionSpace;
-    }
 
     public String getText() {
         return text;
@@ -100,8 +100,7 @@ public class PromotionAd {
         this.link = link;
     }
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     public Date getStartTime() {
         return startTime;
     }
@@ -110,8 +109,6 @@ public class PromotionAd {
         this.startTime = startTime;
     }
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getEndTime() {
         return endTime;
     }

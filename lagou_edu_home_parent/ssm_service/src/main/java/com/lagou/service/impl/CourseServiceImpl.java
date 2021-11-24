@@ -20,91 +20,109 @@ public class CourseServiceImpl implements CourseService {
     private CourseMapper courseMapper;
 
     @Override
-    public List<Course> findCourseByCondition(CourseVO courseVo) {
+    public List<Course> findAllCourse(CourseVO courseVO) {
 
-        List<Course> list = courseMapper.findCourseByCondition(courseVo);
+        List<Course> list = courseMapper.findAllCourse(courseVO);
         return list;
     }
 
+//    @Override
+//    public PageInfo findAllCoursePage(CourseVO courseVO) {
+//
+//        PageHelper.startPage(courseVO.getCurrentPage(),courseVO.getPageSize());
+//        List<Course> courseList = courseMapper.findAllCourse(courseVO);
+//
+//        PageInfo<Course> pageInfo = new PageInfo<>(courseList);
+//        return pageInfo;
+//    }
+
+
+
+
     @Override
-    public void saveCourseOrTeacher(CourseVO courseVO) throws InvocationTargetException, IllegalAccessException {
+    public void saveCourseOrTeacher(CourseVO courseVO) {
 
-        //封装课程信息
-        Course course = new Course();
+        try {
+            //封装课程信息
+            Course course = new Course();
+            BeanUtils.copyProperties(course,courseVO);
 
-        BeanUtils.copyProperties(course,courseVO);
+            //补全信息
+            Date date = new Date();
+            course.setCreateTime(date);
+            course.setUpdateTime(date);
 
-        // 补全课程信息
-        Date date = new Date();
-        course.setCreateTime(date);
-        course.setUpdateTime(date);
+            //保存课程
+            courseMapper.saveCourse(course);
 
-        //保存课程
-        courseMapper.saveCourse(course);
+            //获取新插入数据的id
+            int id = course.getId();
 
-        // 获取新插入数据的id值
-        int id = course.getId();
+            //封装讲师信息
+            Teacher teacher = new Teacher();
+            BeanUtils.copyProperties(teacher,courseVO);
 
-        // 封装讲师信息
-        Teacher teacher = new Teacher();
-        BeanUtils.copyProperties(teacher,courseVO);
+            //补全信息
+            teacher.setCourseId(id);
+            teacher.setCreateTime(date);
+            teacher.setUpdateTime(date);
 
-        // 补全讲师信息
-        teacher.setCreateTime(date);
-        teacher.setUpdateTime(date);
-        teacher.setIsDel(0);
-        teacher.setCourseId(id);
-
-        //保存讲师信息
-        courseMapper.saveTeacher(teacher);
-
+            //保存讲师信息
+            courseMapper.saveTeacher(teacher);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public CourseVO findCourseById(Integer id) {
+    public CourseVO findCourseById(int id) {
         return courseMapper.findCourseById(id);
     }
 
     @Override
-    public void updateCourseOrTeacher(CourseVO courseVO) throws InvocationTargetException, IllegalAccessException {
+    public void updateCourseOrTeacher(CourseVO courseVO) {
+        try {
+            //封装课程信息
+            Course course = new Course();
+            BeanUtils.copyProperties(course,courseVO);
 
-        //封装课程信息
-        Course course = new Course();
-        BeanUtils.copyProperties(course,courseVO);
+            //补全信息
+            Date date = new Date();
+            course.setUpdateTime(date);
 
-        //补全信息
-        Date date = new Date();
-        course.setUpdateTime(date);
+            //保存课程
+            courseMapper.updateCourse(course);
 
-        // 更新课程信息
-        courseMapper.updateCourse(course);
+            //封装讲师信息
+            Teacher teacher = new Teacher();
+            BeanUtils.copyProperties(teacher,courseVO);
 
+            //补全信息
+            teacher.setCourseId(course.getId());
+            teacher.setUpdateTime(date);
 
-        // 封装讲师信息
-        Teacher teacher = new Teacher();
-        BeanUtils.copyProperties(teacher,courseVO);
-
-        // 补全信息
-        teacher.setCourseId(course.getId());
-        teacher.setUpdateTime(date);
-
-        // 更新讲师信息
-        courseMapper.updateTeacher(teacher);
-
+            //保存讲师信息
+            courseMapper.updateTeacher(teacher);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void updateCourseStatus(int courseid, int status) {
+    public void updateCourseStatus(int id,int status) {
 
-        //1.封装数据
-        Course course = new Course();
-        course.setId(courseid);
-        course.setStatus(status);
-        course.setUpdateTime(new Date());
+        try {
+            //封装数据
+            Course course = new Course();
+            course.setStatus(status);
+            course.setId(id);
+            course.setUpdateTime(new Date());
 
-        //2.调用mapper
-        courseMapper.updateCourseStatus(course);
-
+            //调用Dao
+            courseMapper.updateCourseStatus(course);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

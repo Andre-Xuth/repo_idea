@@ -80,4 +80,19 @@ public class ResourceCategory {
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
+
+
+    @Override
+    public String toString() {
+        return "ResourceCategory{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", sort=" + sort +
+                ", createdTime=" + createdTime +
+                ", updatedTime=" + updatedTime +
+                ", createdBy='" + createdBy + '\'' +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", resourceList=" + resourceList +
+                '}';
+    }
 }

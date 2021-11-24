@@ -1,5 +1,6 @@
 package com.lagou.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.lagou.dao.RoleMapper;
 import com.lagou.domain.*;
 import com.lagou.service.RoleService;
@@ -16,97 +17,115 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private RoleMapper roleMapper;
 
-
     @Override
-    public List<Role> findAllRole(Role role) {
-        List<Role> allRole = roleMapper.findAllRole(role);
+    public List<Role> findAllRole(RoleVo roleVo) {
+
+        PageHelper.startPage(roleVo.getCurrentPage(),roleVo.getPageSize());
+        List<Role> allRole = roleMapper.findAllRole(roleVo);
         return allRole;
     }
 
-    @Override
-    public List<Integer> findMenuByRoleId(Integer roleid) {
-        List<Integer> menuByRoleId = roleMapper.findMenuByRoleId(roleid);
 
-        return menuByRoleId;
+    @Override
+    public void saveRole(Role role) {
+
+        role.setCreatedTime(new Date());
+        role.setUpdatedTime(new Date());
+        role.setCreatedBy("system");
+        role.setUpdatedBy("system");
+
+        roleMapper.saveRole(role);
+
+
     }
 
     @Override
-    public void roleContextMenu(RoleMenuVo roleMenuVo) {
+    public void updateRole(Role role) {
+        role.setCreatedTime(new Date());
+        role.setUpdatedTime(new Date());
 
-        //1. 清空中间表的关联关系
+        roleMapper.updateRole(role);
+    }
+
+    @Override
+    public void deleteRole(Integer id) {
+        roleMapper.deleteRole(id);
+    }
+
+    @Override
+    public List<String> findMenuByRoleId(Integer roleId) {
+        List<String> list =   roleMapper.findMenuByRoleId(roleId);
+        return list;
+    }
+
+    @Override
+    public void RoleContextMenu(RoleMenuVo roleMenuVo) {
+
+        // 清空中间表
         roleMapper.deleteRoleContextMenu(roleMenuVo.getRoleId());
 
-        //2. 为角色分配菜单
-
         for (Integer mid : roleMenuVo.getMenuIdList()) {
-
             Role_menu_relation role_menu_relation = new Role_menu_relation();
-            role_menu_relation.setMenuId(mid);
             role_menu_relation.setRoleId(roleMenuVo.getRoleId());
-
-            //封装数据
-            Date date = new Date();
-            role_menu_relation.setCreatedTime(date);
-            role_menu_relation.setUpdatedTime(date);
-
+            role_menu_relation.setMenuId(mid);
+            role_menu_relation.setCreatedTime(new Date());
+            role_menu_relation.setUpdatedTime(new Date());
             role_menu_relation.setCreatedBy("system");
             role_menu_relation.setUpdatedby("system");
-
-            roleMapper.roleContextMenu(role_menu_relation);
+            roleMapper.RoleContextMenu(role_menu_relation);
         }
 
     }
 
     @Override
-    public void deleteRole(Integer roleid) {
+    public List<ResourceCategory> findRoleHaveResource(int id) {
 
-        // 调用根据roleid清空中间表关联关系
-        roleMapper.deleteRoleContextMenu(roleid);
+        //1.获取角色拥有的资源分类数据
+        List<ResourceCategory> categoryList = roleMapper.findRoleHaveResourceCate(id);
 
-        roleMapper.deleteRole(roleid);
-    }
+        //2.获取角色拥有的资源数据
+        List<Resource> resourceList = roleMapper.findRoleHaveResource(id);
 
-    @Override
-    public List<ResourceCategory> findAllResourceByRoleId(Integer id) {
-
-        // 查询当前用户拥有的资源分类信息
-        List<ResourceCategory> allResourceCategory = roleMapper.findAllResourceCategoryByRoleID(id);
-
-        // 获取当前角色拥有的资源信息
-        List<Resource> allResource = roleMapper.findAllResourceByRoleID(id);
-
-        // 封装allResourceCategory
-        for (Resource resource : allResource){
-            for (ResourceCategory resourceCategory:allResourceCategory) {
-                if (resource.getCategoryId().equals(resourceCategory.getId())){
-                    resourceCategory.getResourceList().add(resource);
+        //3.将资源数据封装到对应分类下
+        for (ResourceCategory category : categoryList) {
+            for (Resource resource : resourceList) {
+                //判断
+                if(category.getId() == resource.getCategoryId()){
+                    //将资源保存到集合中
+                    category.getResourceList().add(resource);
                 }
             }
         }
 
-        return allResourceCategory;
+        //4.返回资源分类集合
+        return categoryList;
+
     }
 
     @Override
     public void roleContextResource(RoleResourceVo roleResourceVo) {
-        
-        // 清空中间表的关联关系
-        roleMapper.deleteRoleResourceRelation(roleResourceVo.getRoleId());
-        
-        // 为角色分配资源
-        for (int resourceId:roleResourceVo.getResourceIdList()) {
-            Role_Resource_Relation role_resource_relation = new Role_Resource_Relation();
-            // 封装数据
-            role_resource_relation.setRoleId(roleResourceVo.getRoleId());
-            role_resource_relation.setResourceId(resourceId);
-            Date date = new Date();
-            role_resource_relation.setCreatedTime(date);
-            role_resource_relation.setUpdatedTime(date);
-            role_resource_relation.setCreatedBy("system");
-            role_resource_relation.setUpdatedBy("system");
 
-            roleMapper.saveRoleResourceRelation(role_resource_relation);
+        //根据角色id 清空中间表
+        Integer roleId = roleResourceVo.getRoleId();
+        roleMapper.deleteRoleContextResource(roleId);
+
+        //获取分配资源的id集合
+        List<Integer> resourceIdList = roleResourceVo.getResourceIdList();
+
+        //向中间表插入最新的关联信息
+        for (Integer resId : resourceIdList) {
+            RoleResourceRelation relation = new RoleResourceRelation();
+            relation.setRoleId(roleId);
+            relation.setResourceId(resId);
+            Date date = new Date();
+            relation.setCreatedTime(date);
+            relation.setUpdatedTime(date);
+            relation.setCreatedBy("system");
+            relation.setUpdatedBy("system");
+
+            roleMapper.roleContextResource(relation);
         }
+
     }
 
 

@@ -1,27 +1,33 @@
 package com.lagou.domain;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
 import java.util.List;
 
 public class UserVo {
 
-    private Integer currentPage;
-    private Integer pageSize;
+    //用户登录输入手机号
+    private String phone;
 
-    // 多条件查询：用户名（手机号）
+    //用户登录输入密码
+    private String password;
+
     private String username;
-    // 注册起始时间 2020/11/11 2020-08-04
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date startCreateTime;
-    // 注册结束时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date endCreateTime;
+
+    private String created;
+
+    private Integer currentPage = 1;
+
+    private Integer pageSize = 10;
+
+    private Integer userId;
 
     private List<Integer> roleIdList;
 
-    private Integer userId;
+    //注册起始时间
+    private Date startCreateTime;
+
+    //注册结束时间
+    private Date endCreateTime;
 
     public List<Integer> getRoleIdList() {
         return roleIdList;
@@ -39,28 +45,20 @@ public class UserVo {
         this.userId = userId;
     }
 
-    public Integer getCurrentPage() {
-        return currentPage;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setCurrentPage(Integer currentPage) {
-        this.currentPage = currentPage;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public Integer getPageSize() {
-        return pageSize;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Date getStartCreateTime() {
@@ -77,5 +75,37 @@ public class UserVo {
 
     public void setEndCreateTime(Date endCreateTime) {
         this.endCreateTime = endCreateTime;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public Integer getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(Integer currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 }

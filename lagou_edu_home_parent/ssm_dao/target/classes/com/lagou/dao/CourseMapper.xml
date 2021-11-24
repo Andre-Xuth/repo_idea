@@ -3,25 +3,34 @@
 
 <mapper namespace="com.lagou.dao.CourseMapper">
 
-
-    <!--  多条件查询课程列表  -->
-    <select id="findCourseByCondition" resultType="com.lagou.domain.Course" parameterType="com.lagou.domain.CourseVO">
-        select * from course
+    <!--    分页查询    -->
+    <select id="findAllCourse" parameterType="com.lagou.domain.CourseVO" resultType="com.lagou.domain.Course">
+        SELECT
+        id,
+        course_name,
+        price,
+        sort_num,
+        STATUS
+        FROM
+        course
         <where>
-            <if test="courseName != null and courseName != ''">
-                and course_name like concat('%',#{courseName},'%')
-            </if>
-            <if test="status != null and status != ''">
-                and status = #{status}
-            </if>
             <if test="true">
                 and is_del != 1
             </if>
+            <if test="courseName != null">
+                and course_name like concat('%',#{courseName},'%')
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
         </where>
+
+        order by sort_num
     </select>
 
-    <!--新增课程信息-->
-    <insert id="saveCourse" parameterType="com.lagou.domain.Course">
+    <!--  保存课程信息  -->
+    <insert id="saveCourse" parameterType="com.lagou.domain.Course" useGeneratedKeys="true"  keyColumn="id" keyProperty="id">
+
         INSERT INTO course(
         course_name,
         brief,
@@ -41,42 +50,24 @@
         #{courseListImg},#{sortNum},#{price},#{discounts},#{sales},#{discountsTag},#{courseDescriptionMarkDown},
         #{createTime},#{updateTime});
 
-        <!--获取添加成功记录返回的ID值赋值给Course实体中ID属性-->
-        <selectKey resultType="int" order="AFTER" keyProperty="id">
-            select LAST_INSERT_ID()
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID();
         </selectKey>
-
     </insert>
 
-
-    <!--新增讲师信息-->
+    <!-- 保存讲师信息   -->
     <insert id="saveTeacher" parameterType="com.lagou.domain.Teacher">
         INSERT INTO teacher(
-        course_id,
-        teacher_name,
-        POSITION,
-        description,
-        create_time,
-        update_time
-    ) VALUES(#{courseId},#{teacherName},#{position},#{description},#{createTime},#{updateTime});
+            course_id,
+            teacher_name,
+            POSITION,
+            description,
+            create_time,
+            update_time
+        ) VALUES(#{courseId},#{teacherName},#{position},#{description},#{createTime},#{updateTime});
     </insert>
 
-
-    <!--课程信息回显   public CourseVO findCourseById(Integer id);-->
-    <select id="findCourseById" parameterType="int" resultType="com.lagou.domain.CourseVO">
-        SELECT
-         c.*,
-         t.teacher_name    teacher_name,
-         t.position        POSITION,
-         t.description     description
-        FROM course c
-         LEFT JOIN teacher t
-         ON c.id = t.course_id
-        WHERE c.id = #{id}
-    </select>
-
-
-    <!--更新课程信息-->
+    <!--  修改课程信息  -->
     <update id="updateCourse" parameterType="com.lagou.domain.Course">
         UPDATE course
         <trim prefix="SET" suffixOverrides=",">
@@ -129,7 +120,7 @@
             </if>
 
             <if test="updateTime != null">
-                update_time=#{updateTime},
+                update_time=#{updateTime}
             </if>
 
         </trim>
@@ -137,10 +128,9 @@
         <where>
             <if test="id!=null and id != '' ">id=#{id}</if>
         </where>
-
     </update>
 
-    <!--更新讲师信息-->
+    <!--  修改讲师信息  -->
     <update id="updateTeacher" parameterType="com.lagou.domain.Teacher">
         UPDATE teacher
         <trim prefix="SET" suffixOverrides=",">
@@ -165,9 +155,31 @@
         </where>
     </update>
 
-    <!--课程状态管理-->
+    <!--  修改课程状态  -->
     <update id="updateCourseStatus" parameterType="com.lagou.domain.Course">
-        update course set status= #{status},update_time = #{updateTime} where id = #{id}
+        UPDATE course SET STATUS = #{status} ,update_time = #{updateTime} WHERE id = #{id}
     </update>
+
+    <!--  根据id查询  -->
+    <select id="findCourseById" parameterType="int" resultType="com.lagou.domain.CourseVO">
+        SELECT
+            course_name,
+            brief,
+            teacher_name,
+            POSITION,
+            description,
+            preview_first_field,
+            preview_second_field,
+            course_img_url,
+            course_list_img,
+            sort_num,
+            discounts,
+            price,
+            sales,
+            discounts_tag,
+            course_description_mark_down
+        FROM course LEFT JOIN teacher ON course.id = teacher.course_id
+        WHERE course.id = #{id}
+    </select>
 
 </mapper>

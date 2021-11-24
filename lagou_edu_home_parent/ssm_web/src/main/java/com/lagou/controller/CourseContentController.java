@@ -1,12 +1,14 @@
 package com.lagou.controller;
 
 import com.lagou.domain.Course;
+import com.lagou.domain.CourseLesson;
 import com.lagou.domain.CourseSection;
 import com.lagou.domain.ResponseResult;
 import com.lagou.service.CourseContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -18,65 +20,108 @@ import java.util.Map;
 public class CourseContentController {
 
     @Autowired
-    private CourseContentService courseContentService;
+    private CourseContentService contentService;
 
+    /**
+     * 查询课程内容
+     * */
     @RequestMapping("/findSectionAndLesson")
-    public ResponseResult findSectionAndLessonByCourseId(Integer courseId){
+    public ResponseResult findSectionAndLessonByCourseId(@RequestParam int courseId){
 
-        // 调用service
-        List<CourseSection> list = courseContentService.findSectionAndLessonByCourseId(courseId);
+        try {
+            //调用service
+            List<CourseSection> sectionList = contentService.findSectionAndLessonByCourseId(courseId);
 
-        ResponseResult responseResult = new ResponseResult(true, 200, "章节及课时内容查询成功", list);
+            //封装数据并返回
+            ResponseResult result = new ResponseResult(true,200,"响应成功",sectionList);
+            return result;
 
-        return responseResult;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
+    /**
+     * 回显章节对应的课程信息
+     * */
     @RequestMapping("/findCourseByCourseId")
-    public ResponseResult findCourseByCourseId(Integer courseId){
+    public ResponseResult findCourseByCourseId(@RequestParam int courseId){
 
-        Course course = courseContentService.findCourseByCourseId(courseId);
+        try {
+            //调用service
+            Course course = contentService.findCourseByCourseId(courseId);
+            ResponseResult result = new ResponseResult(true,200,"响应成功",course);
 
-        ResponseResult result = new ResponseResult(true, 200, "章节及课时内容查询成功", course);
-
-        return result;
-
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    /*
-        新增&更新章节信息
+    /**
+     * 保存&修改课时信息
      */
     @RequestMapping("/saveOrUpdateSection")
-    public ResponseResult saveOrUpdateSection(@RequestBody CourseSection courseSection){
+    public ResponseResult saveOrUpdateSection(@RequestBody CourseSection section) {
 
-        // 判断是否携带了章节ID
-        if(courseSection.getId() == null){
-            // 新增
-            courseContentService.saveSection(courseSection);
-            return  new ResponseResult(true,200,"新增章节成功",null);
-        }else {
-            // 更新
-            courseContentService.updateSection(courseSection);
-            return  new ResponseResult(true,200,"更新章节成功",null);
+        try {
+            //判断携带id是修改操作否则是插入操作
+            if(section.getId() == null){
+                contentService.saveSection(section);
+                return new ResponseResult(true,200,"响应成功",null);
+            }else{
+                contentService.updateSection(section);
+                return new ResponseResult(true,200,"响应成功",null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-
     }
 
-    /*
-        修改章节状态
-     */
+    /**
+     * 修改章节状态
+     * 状态，0:隐藏；1：待更新；2：已发布
+     * */
     @RequestMapping("/updateSectionStatus")
-    public ResponseResult updateSectionStatus(int id,int status){
+    public ResponseResult updateSectionStatus(@RequestParam int id, @RequestParam int status){
 
-        courseContentService.updateSectionStatus(id,status);
+        try {
+            contentService.updateSectionStatus(id,status);
 
-        //数据响应
-        Map<Object, Object> map = new HashMap<>();
-        map.put("status",status);
+            //封装最新的状态信息
+            Map<String,Integer> map = new HashMap<>();
+            map.put("status",status);
 
-        ResponseResult responseResult = new ResponseResult(true, 200, "修改章节状态成功", map);
-        return responseResult;
+            ResponseResult result = new ResponseResult(true,200,"响应成功",map);
+            return result;
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
+    /**
+     * 保存&修改课时
+     * */
+    @RequestMapping("/saveOrUpdateLesson")
+    public ResponseResult saveOrUpdateLesson(@RequestBody CourseLesson lesson){
 
+        try {
+            if(lesson.getId() == null){
+                contentService.saveLesson(lesson);
+                return new ResponseResult(true,200,"响应成功",null);
+
+            }else{
+                contentService.updateLesson(lesson);
+                return new ResponseResult(true,200,"响应成功",null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

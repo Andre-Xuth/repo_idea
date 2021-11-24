@@ -6,7 +6,6 @@ import com.lagou.service.ResourceCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,38 +17,35 @@ public class ResourceCategoryController {
     @Autowired
     private ResourceCategoryService resourceCategoryService;
 
+
     @RequestMapping("/findAllResourceCategory")
     public ResponseResult findAllResourceCategory(){
         List<ResourceCategory> allResourceCategory = resourceCategoryService.findAllResourceCategory();
-
-        return  new ResponseResult(true,200,"查询所有分类信息成功",allResourceCategory);
-
+        ResponseResult responseResult = new ResponseResult(true, 200, "响应成功", allResourceCategory);
+        return responseResult;
     }
 
     @RequestMapping("/saveOrUpdateResourceCategory")
     public ResponseResult saveOrUpdateResourceCategory(@RequestBody ResourceCategory resourceCategory){
 
-        if (resourceCategory.getId() == null){
-
+        if(resourceCategory.getId() == null){
             resourceCategoryService.saveResourceCategory(resourceCategory);
-
-            return  new ResponseResult(true,200,"添加所有分类信息成功",null);
-        }else{
-
+        }else {
             resourceCategoryService.updateResourceCategory(resourceCategory);
-
-            return  new ResponseResult(true,200,"修改所有分类信息成功",null);
         }
+
+        ResponseResult responseResult = new ResponseResult(true, 200, "响应成功", "");
+        return responseResult;
     }
 
+    /*
+        删除资源分类
+     */
     @RequestMapping("/deleteResourceCategory")
     public ResponseResult deleteResourceCategory(Integer id){
-
         resourceCategoryService.deleteResourceCategory(id);
-
-        return  new ResponseResult(true,200,"删除分类信息成功",null);
-
+        ResponseResult responseResult = new ResponseResult(true, 200, "响应成功", "");
+        return responseResult;
     }
-
 
 }

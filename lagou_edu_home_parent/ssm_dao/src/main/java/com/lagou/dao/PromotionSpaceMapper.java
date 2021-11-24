@@ -7,23 +7,27 @@ import java.util.List;
 public interface PromotionSpaceMapper {
 
 
-    // 查询所有的广告位
+    /*
+         分页获取所有的广告位
+     */
     public List<PromotionSpace> findAllPromotionSpace();
+
 
     /*
         添加广告位
      */
     public void savePromotionSpace(PromotionSpace promotionSpace);
 
-    /*
-         根据Id查询广告位信息
-    */
-    public PromotionSpace findPromotionSpaceById(int id);
-
-    /*
-         更新广告位名称
-     */
+    /**
+     * 修改广告位
+     * */
     public void updatePromotionSpace(PromotionSpace promotionSpace);
+
+
+    /**
+     * 根据id 查询广告位信息
+     * */
+    PromotionSpace findPromotionSpaceById(int id);
 
 
 }

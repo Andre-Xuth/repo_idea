@@ -1,8 +1,6 @@
 package com.lagou.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,11 +37,9 @@ public class Menu {
     private int level;
 
     //创建时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdTime;
 
     //更新时间
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedTime;
 
     //创建人
@@ -52,9 +48,11 @@ public class Menu {
     //更新人
     private String updatedBy;
 
-    // 声明集合：当前父级菜单所关联的子级菜单
-    private List<Menu> subMenuList;
 
+    /**
+     * 实现自关联,表示子菜单
+     * */
+    private List<Menu> subMenuList = new ArrayList<>();
 
     public List<Menu> getSubMenuList() {
         return subMenuList;
@@ -136,8 +134,7 @@ public class Menu {
         this.level = level;
     }
 
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+
     public Date getCreatedTime() {
         return createdTime;
     }
@@ -146,8 +143,7 @@ public class Menu {
         this.createdTime = createdTime;
     }
 
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+
     public Date getUpdatedTime() {
         return updatedTime;
     }

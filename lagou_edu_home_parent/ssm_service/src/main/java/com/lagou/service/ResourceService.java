@@ -2,15 +2,17 @@ package com.lagou.service;
 
 import com.github.pagehelper.PageInfo;
 import com.lagou.domain.Resource;
-import com.lagou.domain.ResourseVo;
+import com.lagou.domain.ResourceVo;
 
 public interface ResourceService {
 
-   /*（
-        资源分页&多条件查询
-     */
+    public PageInfo<Resource> findAllResource(ResourceVo resourceVo);
 
-    public PageInfo<Resource> findAllResourceByPage(ResourseVo resourseVo);
+    void saveResource(Resource resource);
+
+    void updateResource(Resource resource);
+
+    void deleteResource(Integer id);
 
 
 }
